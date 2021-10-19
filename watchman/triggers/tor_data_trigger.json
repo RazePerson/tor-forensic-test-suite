@@ -1,0 +1,13 @@
+[
+    "trigger",
+    "/home/ubuntu/tor-browser_en-US/Browser",
+    {
+        "name": "every_tor_file",
+        "expression": [
+            "type", "f"
+        ],
+        "command": [
+            "/home/ubuntu/thesis/triggers/execute_on_trigger.sh"
+        ]
+    }
+]
