@@ -1,77 +1,47 @@
+# import sandbox.consts as consts
 import os
-import pwd
-import socket
-import logging as log
 import subprocess
+import consts as consts
+
 from time import sleep
-import tbselenium.common as cm
-from tbselenium.tbdriver import TorBrowserDriver
-from tbselenium.utils import launch_tbb_tor_with_stem
-from subprocess import check_output, call
+from logger import Logging
+from system_utils import SystemUtils
+from tor_browser_using_stem import TorBrowserUsingStem
+from tor_browser_using_running_tor import TorBrowserUsingRunningTor
 
-tbb_path="/home/ubuntu/tor-browser_en-US"
-geckodriver="/home/ubuntu/geckodriver/geckodriver"
-socks_port=9150
-test_site="https://check.torproject.org"
-tbb_runnable="start-tor-browser.desktop"
-# tor_runnable="/home/ubuntu/tor-browser_en-US/Browser/start-tor-browser"
-# current_dir = os.path.dirname(os.path.realpath(__file__))
-localhost="127.0.0.1"
+log = Logging()
+sys = SystemUtils()
 
-
-def launch_tbb():
-    log.info("Starting TBB...")
-    pid = subprocess.Popen("./" + tbb_runnable, cwd=tbb_path).pid
-    return pid
-
-def start_strace_on_process(pid, username):
-    log.info("Starting strace on %s..." % str(pid))
-    subprocess.run(["strace", "-u", username, "-p", str(pid)])
-
-def check_socket(port):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        if sock.connect_ex((localhost, port)) == 0:
-            log.info("Port %d is open..." % port)
-        else:
-            log.info("Port %d is not open..." % port)
-
-
-def wait_until_tbb_port_is_open():
-    log.info("Checking if SOCKS port is open...")
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    result = sock.connect_ex((localhost, socks_port))
-    # while result != 0:
-        # pass
-    sock.close()
-
-def connect_to_tbb():
-    log.info("Connecting to TBB...")
-    # tor_process = launch_tbb_tor_with_stem(tbb_path=tbb_path)
-    with TorBrowserDriver(tbb_path=tbb_path, tor_cfg=cm.USE_RUNNING_TOR, socks_port=socks_port, executable_path=geckodriver) as driver:
-        # input("Press Enter to continue...")
-        return driver
-
-def visit_site(driver, site_name):
-    log.info("Visiting site...")
-    # input("Press Enter to continue...")
-    driver.load(site_name)
-
-def get_pid(proc_name):
-    return check_output(["pidof"], proc_name)
-
-def get_username():
-    return pwd.getpwuid(os.getuid()).pw_name
+def wait_until_port_is_open(port):
+    log.info("Checking if port % is open..." % port)
+    while sys.check_if_port_is_open(port) == 0:
+        pass
+    log.info("Port % is open" % port)
 
 def main():
-    log.getLogger().setLevel(log.INFO)
-    tbb_pid = launch_tbb()
-    check_socket(socks_port)
-    sleep(5)
-    check_socket(socks_port)
+
+    tbb = TorBrowserUsingStem()
+
+    tbb.launch_tbb()
+    # pid = sys.get_pid("\-\-marionette \-no\-remote")
+        
+    # wait_until_port_is_open(consts.SOCKCS_PORT)
+    # sys.check_if_port_is_open(consts.SOCKCS_PORT)
+    # sleep(5)
+    # sys.check_if_port_is_open(consts.SOCKCS_PORT)
     # wait_until_tbb_port_is_open()
     # start_strace_on_process(tbb_pid, get_username())
-    driver = connect_to_tbb()
-    visit_site(driver, test_site)
+    driver = tbb.connect_to_tbb()
+    pids = os.popen("pgrep firefox.real").read()
+    cmd = "sudo strace -p %s -o %s"%(str(pids), consts.STRACE_FILE)
+    log.info("Executing command %s" % cmd)
+    os.system(cmd)
+    # subprocess.call(["sudo strace -p ", pids, " -o ", consts.STRACE_FILE])
+    # log.info("Pids for Tor processes are:")
+    # log.info(pids)
+    tbb.load_url(consts.TEST_SITE)
+    # input("Press Enter to kill Tor process...")
+    tbb.kill_process()
     # tor_process.kill()
 
 if __name__ == '__main__':

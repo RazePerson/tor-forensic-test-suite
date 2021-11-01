@@ -1,0 +1,9 @@
+TBB_PATH="/home/ubuntu/tbb/browsed_a_lot/tor-browser_en-US"
+GECKODRIVER="/home/ubuntu/geckodriver/geckodriver"
+STRACE_FILE="/home/ubuntu/thesis/strace_output"
+SOCKCS_PORT=9150
+TEST_SITE="https://check.torproject.org"
+TBB_RUNNABLE="start-tor-browser.desktop"
+# tor_runnable="/home/ubuntu/tor-browser_en-US/Browser/start-tor-browser"
+# current_dir = os.path.dirname(os.path.realpath(__file__))
+LOCALHOST="127.0.0.1"
