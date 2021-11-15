@@ -1,6 +1,8 @@
 import os
+import re
 import pwd
 import socket
+import tarfile
 import subprocess
 import consts as consts
 
@@ -11,9 +13,13 @@ class SystemUtils:
     def __init__(self):
         self.log = Logging()
 
-    def start_strace_on_process(self, pid, username):
+    def __start_strace_on_process(self, pid, username):
         self.log.info("Starting strace on %s..." % str(pid))
         subprocess.run(["strace", "-u", username, "-p", str(pid)])
+
+    def strace_on_process_into_file(self, file, pids):
+        self.log.info("Checking output for %s" % file)
+        subprocess.Popen(["sudo", "strace", "-p", pids, "-o", file])
 
     def check_if_port_is_open(self, port):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -24,3 +30,38 @@ class SystemUtils:
 
     def get_username(self):
         return pwd.getpwuid(os.getuid()).pw_name
+
+    def strings(self, filename):
+        return subprocess.getoutput("strings %s" %filename)
+        # return subprocess.check_output(["strings", filename], input="text")
+
+    def find_files(self, path, filename_regex):
+        file_paths = []
+        regex = re.compile(filename_regex)
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                if regex.match(file):
+                    file_paths.append(os.path.join(root, file))
+        return file_paths
+
+            # if filename in files:
+            #     print(os.path.join(root, filename))
+
+    def create_dir(self, path):
+        if not os.path.isdir(path):
+            os.mkdir(path)
+
+    def extract_tar_file(self, file_name, destination_path):
+        file = tarfile.open(file_name)
+
+        self.log.info("Extracting %s file to %s" % (file_name, destination_path))
+        file.extractall(destination_path)
+
+    def write_to_file(self, input, file, append=False):
+        mode = "w"
+        if append:
+            mode = "a"
+        self.log.info("Writing to file %s" % file)
+        file = open(file, mode)
+        file.write(input)
+        file.close
