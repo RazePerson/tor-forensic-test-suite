@@ -12,3 +12,21 @@ EXCLUDED_URLS=['mozilla.org/xre/app-info;1', 'mozilla.org/timer;1', 'mozilla.org
 TOR_ARCHIVE_URLS="https://archive.torproject.org/tor-package-archive/torbrowser/"
 TBB_DOWNLOAD_PATH="/home/ubuntu/tor_browser_archive/"
 BIN_FILE_URL_PATH="/home/ubuntu/thesis/bin_file_urls/"
+URL_REGEX=r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+
+CAPABILITIES={
+                "marionette": True,
+                "capabilities": {
+                    "alwaysMatch": {
+                        "moz:firefoxOptions": {
+                            "log": {"level": "info"},
+                            "args": ["-profile", "/home/ubuntu/tbb/bal_profile"]
+                        }
+                    }
+                }
+            }
+
+SQLITE_TABLE_QUERY="SELECT name FROM sqlite_master WHERE type='table';"
+SQLITE_SELECT_ALL_QUERY="SELECT * FROM "
+TEST_SQLITE_FILE="/home/ubuntu/tbb/browsed_a_lot/tor-browser_en-US/Browser/TorBrowser/Data/Browser/profile.default/storage.sqlite"
+CSV_DUMP_DIR="/home/ubuntu/thesis/csv_dumps/"

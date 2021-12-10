@@ -20,13 +20,15 @@ class TorBrowserUsingStem:
     def connect_to_tbb(self, tbb_path):
         self.log.info("Connecting to TBB...")
         # tor_process = launch_tbb_tor_with_stem(tbb_path=tbb_path)
-        self.driver = TorBrowserDriver(tbb_path, tor_cfg=cm.USE_STEM, executable_path=consts.GECKODRIVER)
+        self.driver = TorBrowserDriver(tbb_path, tor_cfg=cm.USE_STEM, executable_path=consts.GECKODRIVER, capabilities=consts.CAPABILITIES)
         # input("Press Enter to continue...")
         # self.driver = driver
         
     def load_url(self, url):
         self.log.info("Loading url: %s" % url)
-        self.driver.load_url(url)
+        self.driver.load_url(url, wait_for_page_body=True)
 
     def kill_process(self):
-        self.tor_process.kill()
+        self.log.info("Killing tor process...")
+        # self.tor_process.kill()
+        self.driver.quit()

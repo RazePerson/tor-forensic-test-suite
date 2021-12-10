@@ -1,6 +1,9 @@
 import os
 import re
 import pwd
+import psutil
+import signal
+import shutil
 import socket
 import tarfile
 import subprocess
@@ -28,6 +31,13 @@ class SystemUtils:
     def get_pid(self, proc_name):
         return subprocess.check_output(["pidof", proc_name])
 
+    def terminate_processes(self, pids):
+        for pid in pids:
+            pid = int(pid)
+            if psutil.pid_exists(pid):
+                self.log.info("Killing process with PID %d" % pid)
+                os.kill(pid, signal.SIGTERM)
+
     def get_username(self):
         return pwd.getpwuid(os.getuid()).pw_name
 
@@ -50,6 +60,13 @@ class SystemUtils:
     def create_dir(self, path):
         if not os.path.isdir(path):
             os.mkdir(path)
+
+    def delete_dir(self, directory):
+        if os.path.isdir(directory):
+            self.log.info("Deleting directory %s" % directory)
+            shutil.rmtree(directory)
+        else:
+            self.log.info("%s is not a directory. Not deleting." % directory)
 
     def extract_tar_file(self, file_name, destination_path):
         file = tarfile.open(file_name)

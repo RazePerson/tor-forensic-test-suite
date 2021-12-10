@@ -13,23 +13,30 @@ class Utils:
         self.log = Logging()
 
     def find_url(self, string):
- 
-        # findall() has been used 
-        # with valid conditions for urls in string
-        regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+        regex = consts.URL_REGEX
         url = re.findall(regex,string)      
         return [x[0] for x in url]
 
     def find_urls_in_file(self, file, excluded_urls=None):
-        file_strings = sys.strings(file)        
+        file_strings = sys.strings(file)
         urls = self.find_url(file_strings)
         if excluded_urls is None:
             return '\n'.join(urls)
         else:
             return '\n'.join(self.__exclude_from_list(urls, consts.EXCLUDED_URLS))
 
-    def __exclude_from_list(self, source_list, exclusion_list):
-        return [i for i in source_list if i not in exclusion_list]
+    def print_urls_from_files(self, tbb_path, file_regex):
+        file_paths = sys.find_files(tbb_path, file_regex)
+        file_strings = ""
+        for file in file_paths:
+            file_strings = sys.strings(file)
+        
+        urls = self.find_url(file_strings)
+        excluded_urls = ""
+        # print("Found urls:")
+        # found_urls = ''.join(utils.exclude_from_list(urls, consts.EXCLUDED_URLS))
+        found_urls = ''.join(urls)
+        sys.write_to_file(found_urls, tbb_path + "urls_in_bin_file")
 
     def download_and_extract_tor_browser(self, version):
         file_name = "tor-browser-linux64-" + version + "_en-US.tar.xz"
@@ -45,7 +52,7 @@ class Utils:
             file.write(response.content)
 
         sys.extract_tar_file(file_path, directory)
-        return directory + "tor-browser_en-US/"
+        return directory
 
     def __build_url(self, version, file_name):
         tar_file_path = version + "/" + file_name
@@ -58,3 +65,6 @@ class Utils:
         sys.create_dir(consts.TBB_DOWNLOAD_PATH)
         sys.create_dir(directory)
         return directory
+
+    def __exclude_from_list(self, source_list, exclusion_list):
+        return [i for i in source_list if i not in exclusion_list]

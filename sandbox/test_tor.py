@@ -1,6 +1,8 @@
 # import sandbox.consts as consts
 import os
 import subprocess
+
+from psutil import pids
 import consts as consts
 
 from time import sleep
@@ -20,19 +22,6 @@ def wait_until_port_is_open(port):
         pass
     log.info("Port % is open" % port)
 
-def print_urls_that_bin_file(tbb_path):
-    file_paths = sys.find_files(tbb_path, ".*scriptCache-child-current\.bin")
-    file_strings = ""
-    for file in file_paths:
-        file_strings = sys.strings(file)
-    
-    urls = utils.find_url(file_strings)
-    excluded_urls = ""
-    # print("Found urls:")
-    # found_urls = ''.join(utils.exclude_from_list(urls, consts.EXCLUDED_URLS))
-    found_urls = ''.join(urls)
-    sys.write_to_file(found_urls, tbb_path + "urls_in_bin_file")
-
 def launch_and_test_tor(tbb_path, strace_file_tor=None, strace_file_firefox_real=None, strace=False, checkURLs=False):
 
     tbb = TorBrowserUsingStem()
@@ -40,19 +29,20 @@ def launch_and_test_tor(tbb_path, strace_file_tor=None, strace_file_firefox_real
     tbb.launch_tbb(tbb_path)
     driver = tbb.connect_to_tbb(tbb_path)
     
+    pids_tor = os.popen("pgrep tor").read()
+    pids_firefox_real = os.popen("pgrep firefox.real").read()
     if strace:
         log.info("Starting strace...")
-        pids = os.popen("pgrep tor").read()
-        sys.strace_on_process_into_file(strace_file_tor, pids)
-        pids = os.popen("pgrep firefox.real").read()
-        sys.strace_on_process_into_file(strace_file_firefox_real, pids)
+        sys.strace_on_process_into_file(strace_file_tor, pids_tor)
+        sys.strace_on_process_into_file(strace_file_firefox_real, pids_firefox_real)
     
     if checkURLs:
         log.info("Checking URLS...")
-        print_urls_that_bin_file(tbb_path)
+        utils.print_urls_from_files(tbb_path, ".*\.bin")
 
     tbb.load_url(consts.TEST_SITE)
     tbb.kill_process()
+    # sys.terminate_processes([pids_tor, pids_firefox_real])
 
 def test_specific_version(version):
     
@@ -62,17 +52,22 @@ def test_specific_version(version):
     strace_file_firefox_real = tbb_path + "strace_output_" + version + "_firefox_real"
 
     log.info("Launching and testing Tor version %s..." % version)
-    launch_and_test_tor(tbb_path, checkURLs=True)
+    tbb_executable_path = tbb_path + "tor-browser_en-US/"
+    launch_and_test_tor(tbb_executable_path, checkURLs=True)
+    # input("Press enter to delete dir...")
+    # sys.delete_dir(tbb_path)
 
 def main():
-    bin_files = sys.find_files(consts.TBB_PATH, ".*\.bin")
-    for bin_file in bin_files:
-        found_urls = utils.find_urls_in_file(bin_file)
-        bin_file_basename = os.path.basename(bin_file)
-        sys.write_to_file(found_urls, consts.BIN_FILE_URL_PATH + bin_file_basename + "_urls")
+    # test_specific_version("9.5.1")
+
+    # bin_files = sys.find_files(consts.TBB_PATH, ".*\.bin")
+    # for bin_file in bin_files:
+    #     found_urls = utils.find_urls_in_file(bin_file)
+    #     bin_file_basename = os.path.basename(bin_file)
+    #     sys.write_to_file(found_urls, consts.BIN_FILE_URL_PATH + bin_file_basename + "_urls")
         
     # launch_and_test_tor(tbb_path, strace_file_tor, strace_file_firefox_real)
-    # launch_and_test_tor(consts.TBB_PATH, consts.STRACE_FILE_TOR, consts.STRACE_FILE_FIREFOX_REAL)
+    launch_and_test_tor(consts.TBB_PATH)
 
 if __name__ == '__main__':
     main()
