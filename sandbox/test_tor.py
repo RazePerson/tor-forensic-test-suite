@@ -24,10 +24,10 @@ def wait_until_port_is_open(port):
 
 def launch_and_test_tor(tbb_path, strace_file_tor=None, strace_file_firefox_real=None, strace=False, checkURLs=False):
 
-    tbb = TorBrowserUsingStem()
+    tbb = TorBrowserUsingStem(tbb_path=tbb_path)
 
-    tbb.launch_tbb(tbb_path)
-    driver = tbb.connect_to_tbb(tbb_path)
+    tbb.launch_tbb()
+    tbb.connect_to_tbb()
     
     pids_tor = os.popen("pgrep tor").read()
     pids_firefox_real = os.popen("pgrep firefox.real").read()

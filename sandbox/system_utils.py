@@ -57,6 +57,9 @@ class SystemUtils:
             # if filename in files:
             #     print(os.path.join(root, filename))
 
+    def check_if_dir_exists(self, dir_path):
+        return os.path.isdir(dir_path)
+
     def create_dir(self, path):
         if not os.path.isdir(path):
             os.mkdir(path)
@@ -82,3 +85,7 @@ class SystemUtils:
         file = open(file, mode)
         file.write(input)
         file.close
+
+    def system_exit(self, message):
+        self.log.fatal(message)
+        raise SystemExit(1)

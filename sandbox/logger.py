@@ -16,5 +16,8 @@ class Logging:
     def error(self, message):
         self.log.error(message)
 
+    def fatal(self, message):
+        self.log.fatal(message)
+
     def set_level(self, level):
         self.log.getLogger().setLevel(level)
