@@ -1,9 +1,11 @@
+import csv
 import re
 import requests
-import consts as consts
+import pandas as pd
+import sandbox.consts as consts
 
-from logger import Logging
-from system_utils import SystemUtils
+from sandbox.logger import Logging
+from sandbox.system_utils import SystemUtils
 
 sys = SystemUtils()
 
@@ -53,6 +55,10 @@ class Utils:
 
         sys.extract_tar_file(file_path, directory)
         return directory
+
+    def read_csv_column(self, csv_file, column):
+        df = pd.read_csv(csv_file)
+        return df[column]
 
     def __build_url(self, version, file_name):
         tar_file_path = version + "/" + file_name

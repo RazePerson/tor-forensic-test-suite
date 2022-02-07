@@ -1,9 +1,10 @@
-from logger import Logging
-from system_utils import SystemUtils
+from sandbox.logger import Logging
+from selenium.webdriver.common.by import By
+from sandbox.system_utils import SystemUtils
 from tbselenium.tbdriver import TorBrowserDriver
 from tbselenium.utils import launch_tbb_tor_with_stem
 
-import consts as consts
+import sandbox.consts as consts
 import tbselenium.common as cm
 
 sys = SystemUtils()
@@ -27,7 +28,7 @@ class TorBrowserUsingStem:
             self.log.info("Launching TBB using custom profile...")
             self.log.info("Checking custom profile path %s" %
                           self.tbb_profile_path)
-            if not sys.check_if_dir_exists(self.tbb_profile_path):
+            if not sys.dir_exists(self.tbb_profile_path):
                 sys.system_exit("Directory %s doesn't exist!" %
                                 self.tbb_profile_path)
         else:
@@ -40,18 +41,29 @@ class TorBrowserUsingStem:
 
     def connect_to_tbb(self):
         # tor_process = launch_tbb_tor_with_stem(tbb_path=tbb_path)
-        self.driver = TorBrowserDriver(self.tbb_path, tor_cfg=cm.USE_STEM,
+        self.driver = TorBrowserDriver(tbb_path=self.tbb_path,
+                                       tor_cfg=cm.USE_STEM,
                                        executable_path=consts.GECKODRIVER,
                                        use_custom_profile=self.use_custom_profile,
-                                       tbb_profile_path=self.tbb_profile_path)
+                                       tbb_profile_path=self.tbb_profile_path,
+                                       tbb_logfile_path=consts.DEV_NULL)
         # input("Press Enter to continue...")
         # self.driver = driver
 
     def load_url(self, url):
         self.log.info("Loading url: %s" % url)
-        self.driver.load_url(url, wait_for_page_body=True)
+        self.driver.get(url)
 
     def kill_process(self):
         self.log.info("Killing tor process...")
         # self.tor_process.kill()
         self.driver.quit()
+        tor_pid = sys.get_pid("tor")
+        sys.terminate_processes([tor_pid])
+
+    def element_exists(self, by, value):
+        try:
+            self.driver.find_element(by=by, value=value)
+        except Exception:
+            return False
+        return True

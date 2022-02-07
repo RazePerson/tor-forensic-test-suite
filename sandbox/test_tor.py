@@ -1,16 +1,12 @@
 # import sandbox.consts as consts
 import os
-import subprocess
 
-from psutil import pids
 import consts as consts
 
-from time import sleep
 from utils import Utils
 from logger import Logging
 from system_utils import SystemUtils
 from tor_browser_using_stem import TorBrowserUsingStem
-from tor_browser_using_running_tor import TorBrowserUsingRunningTor
 
 log = Logging()
 sys = SystemUtils()

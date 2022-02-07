@@ -3,7 +3,11 @@ GECKODRIVER="/home/ubuntu/geckodriver/geckodriver"
 STRACE_FILE_TOR="/home/ubuntu/thesis/strace_output_tor"
 STRACE_FILE_FIREFOX_REAL="/home/ubuntu/thesis/strace_output_firefox_real"
 SOCKCS_PORT=9150
+
 TEST_SITE="https://check.torproject.org"
+JETSTREAM="https://browserbench.org/JetStream/"
+GOOGLE="https://google.com"
+
 TBB_RUNNABLE="start-tor-browser.desktop"
 # tor_runnable="/home/ubuntu/tor-browser_en-US/Browser/start-tor-browser"
 # current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -20,3 +24,10 @@ TEST_SQLITE_FILE="/home/ubuntu/tbb/browsed_a_lot/tor-browser_en-US/Browser/TorBr
 CSV_DUMP_DIR="/home/ubuntu/thesis/csv_dumps/"
 
 DEFAULT_TBB_PROFILE_PATH="/home/ubuntu/default_tbb_profile_path/"
+PLACEHOLDER_PROFILE_PATH_SUFFIX="Browser/TorBrowser/Data/Browser/profile.default"
+DEV_NULL="/dev/null"
+TEMP_TEST_DIR="/tmp/testing_tbb"
+
+JETSTREAM_START_TEST_XPATH="/html/body/main/div[2]/a"
+GOOGLE_SEARCH_BOX_XPATH="/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input"
+COOKIE_AGREE_XPATH="/html/body/div[2]/div[2]/div[3]/span/div/div/div/div[3]/button[2]/div"

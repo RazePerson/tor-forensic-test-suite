@@ -7,9 +7,9 @@ import shutil
 import socket
 import tarfile
 import subprocess
-import consts as consts
+import sandbox.consts as consts
 
-from logger import Logging
+from sandbox.logger import Logging
 
 class SystemUtils:
 
@@ -29,7 +29,7 @@ class SystemUtils:
             return sock.connect_ex((consts.LOCALHOST, port)) == 0
 
     def get_pid(self, proc_name):
-        return subprocess.check_output(["pidof", proc_name])
+        return int(subprocess.check_output(["pidof", proc_name]))
 
     def terminate_processes(self, pids):
         for pid in pids:
@@ -57,7 +57,7 @@ class SystemUtils:
             # if filename in files:
             #     print(os.path.join(root, filename))
 
-    def check_if_dir_exists(self, dir_path):
+    def dir_exists(self, dir_path):
         return os.path.isdir(dir_path)
 
     def create_dir(self, path):
