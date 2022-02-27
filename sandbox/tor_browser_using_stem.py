@@ -1,6 +1,7 @@
 from sandbox.logger import Logging
 from selenium.webdriver.common.by import By
 from sandbox.system_utils import SystemUtils
+from selenium.webdriver.common.keys import Keys
 from tbselenium.tbdriver import TorBrowserDriver
 from tbselenium.utils import launch_tbb_tor_with_stem
 
@@ -53,6 +54,15 @@ class TorBrowserUsingStem:
     def load_url(self, url):
         self.log.info("Loading url: %s" % url)
         self.driver.get(url)
+
+    def search_for_keyword(self, website, search_box_xpath, keyword):
+        self.load_url(website)
+
+        search_box = self.driver.find_element(
+            by=By.XPATH, value=search_box_xpath)
+
+        search_box.send_keys(keyword)
+        search_box.send_keys(Keys.RETURN)
 
     def kill_process(self):
         self.log.info("Killing tor process...")

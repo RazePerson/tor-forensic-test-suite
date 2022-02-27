@@ -56,4 +56,4 @@ class DBUtils:
                 for row in rows:
                     writer.writerow(row)  # write data row
                 f.closed
-        print("Done! " + output_dir)
+        # print("Done! " + output_dir)

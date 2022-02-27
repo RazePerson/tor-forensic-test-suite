@@ -1,9 +1,11 @@
-import csv
 import re
+import ftplib
+from urllib import request
 import requests
 import pandas as pd
 import sandbox.consts as consts
 
+from tld import get_tld
 from sandbox.logger import Logging
 from sandbox.system_utils import SystemUtils
 
@@ -42,8 +44,17 @@ class Utils:
 
     def download_and_extract_tor_browser(self, version):
         file_name = "tor-browser-linux64-" + version + "_en-US.tar.xz"
-        url = self.__build_url(version, file_name)
+        url = self.__build_url(version, "")
         self.log.info("Downloading %s" % url)
+        response = requests.get(url)
+
+        tar_file = re.findall(">(tor-browser-linux64-"+version+"_en-US.tar.xz)", response.text)
+        if len(tar_file) == 0:
+            tar_file = re.findall(">(tor-browser-linux64-"+version+".*.tar.xz)", response.text)
+
+        url = self.__build_url(version, tar_file[0])
+        self.log.info(url)
+
         response = requests.get(url)
 
         directory = self.__create_download_dir(version)
@@ -56,9 +67,28 @@ class Utils:
         sys.extract_tar_file(file_path, directory)
         return directory
 
+    # def download_and_extract_tor_browser(self, version):
+    #     file_name = "tor-browser-linux64-" + version + "_en-US.tar.xz"
+    #     url = self.__build_url(version, file_name)
+    #     self.log.info("Downloading %s" % url)
+    #     response = requests.get(url)
+
+    #     directory = self.__create_download_dir(version)
+
+    #     file_path = directory + file_name
+    #     self.log.info("Writing response to file: %s" % file_path)
+    #     with open(file_path, "wb") as file:
+    #         file.write(response.content)
+
+    #     sys.extract_tar_file(file_path, directory)
+    #     return directory
+
     def read_csv_column(self, csv_file, column):
         df = pd.read_csv(csv_file)
         return df[column]
+
+    def extract_url_object(self, url):
+        return get_tld(url, as_object=True)
 
     def __build_url(self, version, file_name):
         tar_file_path = version + "/" + file_name

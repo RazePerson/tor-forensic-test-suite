@@ -1,52 +1,69 @@
 """
 conftest.py
 """
-import time
 
-from re import search
+import os
+import time
 import pytest
 import sandbox.consts as consts
 
+from re import search
+from ctypes import util
 from datetime import datetime
+from sandbox.utils import Utils
 from selenium.webdriver.common.by import By
+from sandbox.system_utils import SystemUtils
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from sandbox.tor_browser_using_stem import TorBrowserUsingStem
 from selenium.webdriver.support import expected_conditions as EC
 
-
 from sandbox.logger import Logging
 log = Logging()
+utils = Utils()
+sys = SystemUtils()
 
 tbb = {}
 
-def _get_connected_tbb():
-    tbb = TorBrowserUsingStem(tbb_path=consts.TBB_PATH)
+def _extract_tbb_path_via_version(tbb_version):
+    tbb_path = utils.download_and_extract_tor_browser(tbb_version)
+    file_path = sys.find_files(tbb_path, "start-tor-browser*")
+    log.info("Found files: " + str(file_path[0]))
+    tbb_path = str(os.path.split(str(file_path[0]))[0])
+    log.info("Path to binary: " + tbb_path)
+    return tbb_path
+
+def _get_connected_tbb(tbb_version, tbb_path, manual):
+
+    if tbb_version != "":
+        tbb_path = _extract_tbb_path_via_version(tbb_version)
+
+    tbb = TorBrowserUsingStem(tbb_path)
+    log.info("Manual: " + str(manual))
+    if manual == True:
+        return tbb
+
     tbb.launch_tbb()
     tbb.connect_to_tbb()
 
     return tbb
 
 
-@pytest.fixture()
-def connected_tbb():
-    return _get_connected_tbb()
+def pytest_addoption(parser):
+    parser.addoption("--tbb_version", action="store", default="")
+    parser.addoption("--tbb_path", action="store", default=consts.TBB_PATH)
+    parser.addoption("--manual", action="store", default=True)
 
 
 @pytest.fixture
-def timestamp_closed_tbb():
-    tbb = _get_connected_tbb()
+def connected_tbb(request):
+    tbb_version = request.config.option.tbb_version
+    tbb_path = request.config.option.tbb_path
+    manual = request.config.option.manual
+    log.info("version: " + tbb_version)
 
-    timestamp_before = datetime.now().timestamp()
-
-    tbb.kill_process()
-    timestamp_after = datetime.now().timestamp()
-
-    timestamp_diff = int(timestamp_after) - int(timestamp_before)
-    timestamp = timestamp_after - timestamp_diff
-
-    return timestamp
+    return _get_connected_tbb(tbb_version, tbb_path, manual)
 
 
 @pytest.fixture
@@ -73,18 +90,18 @@ def jetstream_tbb():
 
 
 @pytest.fixture
-def google_search_tbb():
+def duckduckgo_search_tbb():
     tbb = _get_connected_tbb()
-    tbb.load_url(consts.GOOGLE)
+    tbb.load_url(consts.DUCKDUCKGO_ONION)
 
     # log.info("Looking for cookie button...")
-    if tbb.element_exists(by=By.XPATH, value=consts.COOKIE_AGREE_XPATH):
-        # log.info("Found it! Clicking it...")
-        tbb.driver.find_element(by=By.XPATH, value=consts.COOKIE_AGREE_XPATH).click()
-    
+    # if tbb.element_exists(by=By.XPATH, value=consts.COOKIE_AGREE_XPATH):
+    # log.info("Found it! Clicking it...")
+    # tbb.driver.find_element(by=By.XPATH, value=consts.COOKIE_AGREE_XPATH).click()
+
     # log.info("Looking for search box element...")
     search_box = tbb.driver.find_element(
-        by=By.XPATH, value=consts.GOOGLE_SEARCH_BOX_XPATH)
+        by=By.XPATH, value=consts.DUCKDUCKGO_SEARCH_BOX_XPATH)
     # log.info("Found search box element:")
     log.info(search_box)
 
@@ -96,4 +113,4 @@ def google_search_tbb():
     time.sleep(5)
 
     # log.info("Done! Killing process...")
-    tbb.kill_process()    
+    tbb.kill_process()
