@@ -1,3 +1,4 @@
+from sqlite3 import connect
 import time
 from importlib_metadata import csv
 from numpy import size
@@ -52,8 +53,21 @@ def _create_temp_test_dir():
         sys.create_dir(consts.TEMP_TEST_DIR)
 
 
+def _get_keywords_moz_places(tbb_path, url):
+    tbb_path = tbb_path
+    db_file_regex = "^places.sqlite$"
+    csv_file = consts.TEMP_TEST_DIR + "/moz_places.csv"
+    column = "url"
+    keyword = utils.extract_url_object(url).fld
+    return _find_keyword_in_db_file(
+        tbb_path, db_file_regex, csv_file, column, keyword)
+
+
 def _find_keyword_in_db_file(tbb_path, db_file_regex, csv_file, column, keyword):
-    db_file = str(sys.find_files(tbb_path, db_file_regex)[0])
+    if len(sys.find_files(tbb_path, db_file_regex)) != 0:
+        db_file = str(sys.find_files(tbb_path, db_file_regex)[0])
+    else:
+        return None
 
     _create_temp_test_dir()
     db_utils.dump_to_csv(db_file, consts.TEMP_TEST_DIR)
@@ -152,5 +166,28 @@ def test_find_url_moz_origins(connected_tbb):
 
     assert len(keywords_found) == 0
 
+
 def test_find_url_issue_22867(connected_tbb):
-    
+    keywords_found = _get_keywords_moz_places(
+        connected_tbb.tbb_path, consts.URL_ISSUE_22867)
+
+    log.info("Keywords: " + str(keywords_found))
+
+    assert len(keywords_found) == 0
+
+
+def test_find_url_isse_24866_first_url(connected_tbb):
+    keywords_found = _get_keywords_moz_places(
+        connected_tbb.tbb_path, consts.URL_ISSUE_24866_1)
+
+    log.info("Keywords: " + str(keywords_found))
+
+    assert len(keywords_found) == 0
+
+def test_find_url_isse_24866_second_url(connected_tbb):
+    keywords_found = _get_keywords_moz_places(
+        connected_tbb.tbb_path, consts.URL_ISSUE_24866_2)
+
+    log.info("Keywords: " + str(keywords_found))
+
+    assert len(keywords_found) == 0

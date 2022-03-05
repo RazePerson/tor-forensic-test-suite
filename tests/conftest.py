@@ -26,6 +26,7 @@ sys = SystemUtils()
 
 tbb = {}
 
+
 def _extract_tbb_path_via_version(tbb_version):
     tbb_path = utils.download_and_extract_tor_browser(tbb_version)
     file_path = sys.find_files(tbb_path, "start-tor-browser*")
@@ -34,12 +35,30 @@ def _extract_tbb_path_via_version(tbb_version):
     log.info("Path to binary: " + tbb_path)
     return tbb_path
 
+
+def _extract_geckodriver_path(tbb_path):
+    firefox_version = utils.get_firefox_version_from_tbb_path(tbb_path)
+    log.info("Firefox version: %d" % firefox_version)
+
+    gecko_version = utils.find_gecko_version(firefox_version)
+    directory = utils.download_and_extract_geckodriver(gecko_version)
+
+    log.info("Geckodriver download directory: " + str(directory))
+    log.info("Gecko version: " + str(gecko_version))
+
+    return directory + "geckodriver"
+
+
 def _get_connected_tbb(tbb_version, tbb_path, manual):
+
+    geckodriver_path = consts.DEFAULT_GECKODRIVER_EXECUTABLE
 
     if tbb_version != "":
         tbb_path = _extract_tbb_path_via_version(tbb_version)
+        geckodriver_path = _extract_geckodriver_path(tbb_path)
 
-    tbb = TorBrowserUsingStem(tbb_path)
+    tbb = TorBrowserUsingStem(
+        tbb_path=tbb_path, executable_path=geckodriver_path)
     log.info("Manual: " + str(manual))
     if manual == True:
         return tbb
@@ -56,14 +75,28 @@ def pytest_addoption(parser):
     parser.addoption("--manual", action="store", default=True)
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def connected_tbb(request):
     tbb_version = request.config.option.tbb_version
     tbb_path = request.config.option.tbb_path
     manual = request.config.option.manual
     log.info("version: " + tbb_version)
 
-    return _get_connected_tbb(tbb_version, tbb_path, manual)
+    tbb = _get_connected_tbb(tbb_version, tbb_path, manual)
+
+    tbb.load_url(consts.URL_ISSUE_22867)
+
+    tbb.new_tab()
+
+    tbb.load_url(consts.URL_ISSUE_24866_1)
+
+    tbb.new_tab()
+
+    tbb.load_url(consts.URL_ISSUE_24866_2)
+    time.sleep(30)
+    tbb.kill_process()
+    yield tbb
+    log.info("FINISHED")
 
 
 @pytest.fixture

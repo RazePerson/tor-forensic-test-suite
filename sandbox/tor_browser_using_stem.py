@@ -1,3 +1,4 @@
+from lib2to3.pgen2 import driver
 from sandbox.logger import Logging
 from selenium.webdriver.common.by import By
 from sandbox.system_utils import SystemUtils
@@ -16,10 +17,12 @@ class TorBrowserUsingStem:
     def __init__(self,
                  tbb_path,
                  tor_binary="start-tor-browser",
+                 executable_path=consts.DEFAULT_GECKODRIVER_EXECUTABLE,
                  use_custom_profile=True,
                  tbb_profile_path=consts.DEFAULT_TBB_PROFILE_PATH):
         self.tbb_path = tbb_path
         self.tor_binary = tor_binary
+        self.executable_path = executable_path
         self.use_custom_profile = use_custom_profile
         self.tbb_profile_path = tbb_profile_path
         self.log = Logging()
@@ -44,7 +47,7 @@ class TorBrowserUsingStem:
         # tor_process = launch_tbb_tor_with_stem(tbb_path=tbb_path)
         self.driver = TorBrowserDriver(tbb_path=self.tbb_path,
                                        tor_cfg=cm.USE_STEM,
-                                       executable_path=consts.GECKODRIVER,
+                                       executable_path=self.executable_path,
                                        use_custom_profile=self.use_custom_profile,
                                        tbb_profile_path=self.tbb_profile_path,
                                        tbb_logfile_path=consts.DEV_NULL)
@@ -63,6 +66,13 @@ class TorBrowserUsingStem:
 
         search_box.send_keys(keyword)
         search_box.send_keys(Keys.RETURN)
+
+    def new_tab(self):
+        self.driver.execute_script("window.open('about:blank','secondtab');")
+
+        self.driver.switch_to.window("secondtab")
+        # self.driver.find_element_by_tag_name(
+        # 'body').send_keys(Keys.COMMAND + 't')
 
     def kill_process(self):
         self.log.info("Killing tor process...")

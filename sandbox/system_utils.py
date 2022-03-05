@@ -54,8 +54,11 @@ class SystemUtils:
                     file_paths.append(os.path.join(root, file))
         return file_paths
 
-            # if filename in files:
-            #     print(os.path.join(root, filename))
+    def grep_line_from_file(self, string, file_path):
+        with open(file_path,"r") as file:
+            for line in file:
+                if re.search(string, line):
+                    return line
 
     def dir_exists(self, dir_path):
         return os.path.isdir(dir_path)
