@@ -113,7 +113,7 @@ def test_timestamp(connected_tbb):
 
 # @pytest.mark.skip()
 def test_keyword_in_places_sqlite(connected_tbb):
-    tbb_path = connected_tbb.tbb_path
+    tbb_path = connected_tbb.tbb_profile_path
     db_file_regex = "^places.sqlite$"
     csv_file = consts.TEMP_TEST_DIR + "/moz_places.csv"
     column = "title"
@@ -123,11 +123,11 @@ def test_keyword_in_places_sqlite(connected_tbb):
 
     log.info("Keywords: " + str(keywords_found))
 
-    assert len(keywords_found) == 0
+    assert (keywords_found is None or len(keywords_found) == 0) is True
 
 
 def test_find_url_moz_places(connected_tbb):
-    tbb_path = connected_tbb.tbb_path
+    tbb_path = connected_tbb.tbb_profile_path
     db_file_regex = "^places.sqlite$"
     csv_file = consts.TEMP_TEST_DIR + "/moz_places.csv"
     column = "url"
@@ -137,57 +137,55 @@ def test_find_url_moz_places(connected_tbb):
 
     log.info("Keywords: " + str(keywords_found))
 
-    assert len(keywords_found) == 0
+    assert (keywords_found is None or len(keywords_found) == 0) is True
     # utils.download_and_extract_tor_browser("6.0.1")
 
 
+@pytest.mark.skip()
 def test_moz_origins_existence(connected_tbb):
-    db_file = str(sys.find_files(connected_tbb.tbb_path, "^places.sqlite$")[0])
+    db_file = str(sys.find_files(
+        connected_tbb.tbb_profile_path, "^places.sqlite$")[0])
 
     _create_temp_test_dir()
     db_utils.dump_to_csv(db_file, consts.TEMP_TEST_DIR)
     file = sys.find_files(consts.TEMP_TEST_DIR, "^moz_origins.csv$")
 
     log.info("File: " + str(file))
-    assert size(file) == 0
+    assert (file is None or size(file) == 0) is True
 
 
-@pytest.mark.skip()
-def test_find_url_moz_origins(connected_tbb):
-    tbb_path = connected_tbb.tbb_path
-    db_file_regex = "^places.sqlite$"
-    csv_file = consts.TEMP_TEST_DIR + "/moz_origins.csv"
-    column = "host"
-    keyword = utils.extract_url_object("https://duckduckgo.com/").fld
-    keywords_found = _find_keyword_in_db_file(
-        tbb_path, db_file_regex, csv_file, column, keyword)
+# @pytest.mark.skip()
+def test_find_url_in_moz_origins(connected_tbb):
+    keywords_found = _get_keywords_moz_places(
+        connected_tbb.tbb_profile_path, consts.DUCKDUCKGO_URL)
 
     log.info("Keywords: " + str(keywords_found))
 
-    assert len(keywords_found) == 0
+    assert (keywords_found is None or len(keywords_found) == 0) is True
 
 
 def test_find_url_issue_22867(connected_tbb):
     keywords_found = _get_keywords_moz_places(
-        connected_tbb.tbb_path, consts.URL_ISSUE_22867)
+        connected_tbb.tbb_profile_path, consts.URL_ISSUE_22867)
 
     log.info("Keywords: " + str(keywords_found))
 
-    assert len(keywords_found) == 0
+    assert (keywords_found is None or len(keywords_found) == 0) is True
 
 
 def test_find_url_isse_24866_first_url(connected_tbb):
     keywords_found = _get_keywords_moz_places(
-        connected_tbb.tbb_path, consts.URL_ISSUE_24866_1)
+        connected_tbb.tbb_profile_path, consts.URL_ISSUE_24866_1)
 
     log.info("Keywords: " + str(keywords_found))
 
-    assert len(keywords_found) == 0
+    assert (keywords_found is None or len(keywords_found) == 0) is True
+
 
 def test_find_url_isse_24866_second_url(connected_tbb):
     keywords_found = _get_keywords_moz_places(
-        connected_tbb.tbb_path, consts.URL_ISSUE_24866_2)
+        connected_tbb.tbb_profile_path, consts.URL_ISSUE_24866_2)
 
     log.info("Keywords: " + str(keywords_found))
 
-    assert len(keywords_found) == 0
+    assert (keywords_found is None or len(keywords_found) == 0) is True

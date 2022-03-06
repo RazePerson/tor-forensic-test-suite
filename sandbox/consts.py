@@ -9,6 +9,7 @@ SOCKCS_PORT = 9250
 TEST_SITE = "https://check.torproject.org"
 JETSTREAM = "https://browserbench.org/JetStream/"
 GOOGLE = "https://google.com"
+DUCKDUCKGO_URL = "https://duckduckgo.com/"
 DUCKDUCKGO_ONION = "https://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion/"
 
 URL_ISSUE_22867 = "https://us-u.openx.net/w/1.0/pd?plm=10&ph=e26121be-304d-460c-92c5-0b3d1d4c9b7a"
@@ -50,5 +51,7 @@ GECKODRIVER_RELEASE_PAGE = "https://github.com/mozilla/geckodriver/releases/down
 GECKODRIVER_DOWNLOAD_PATH = "/tmp/geckodriver_archive/"
 GECKODRIVER_TAR_FILE = "geckodriver-v{version}-linux64.tar.gz"
 
-FIREFOX_VERSION="Milestone="
-FIREFOX_VERSION_FILE_REGEX="^platform.ini$"
+FIREFOX_VERSION = "Milestone="
+FIREFOX_VERSION_FILE_REGEX = "^platform.ini$"
+
+SITE_SECURITY_SERVICE_STATE = "^SiteSecurityServiceState.txt$"

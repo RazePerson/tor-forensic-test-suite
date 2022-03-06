@@ -32,9 +32,9 @@ class TorBrowserUsingStem:
             self.log.info("Launching TBB using custom profile...")
             self.log.info("Checking custom profile path %s" %
                           self.tbb_profile_path)
-            if not sys.dir_exists(self.tbb_profile_path):
-                sys.system_exit("Directory %s doesn't exist!" %
-                                self.tbb_profile_path)
+            if sys.dir_exists(self.tbb_profile_path):
+                sys.delete_dir(self.tbb_profile_path)
+            sys.create_dir(self.tbb_profile_path)
         else:
             self.log.info("Launching TBB...")
         tor_binary = self.tbb_path + "/" + self.tor_binary

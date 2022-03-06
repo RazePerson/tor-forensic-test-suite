@@ -20,6 +20,7 @@ unittest.TestLoader.sortTestMethodsUsing = None
 
 
 def test_util(connected_tbb):
+    pass
     # connected_tbb.load_url(consts.DUCKDUCKGO_ONION)
-    log.info("Na...")
+    # log.info("Na...")
     # connected_tbb.kill_process()

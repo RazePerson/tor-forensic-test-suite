@@ -49,6 +49,18 @@ def _extract_geckodriver_path(tbb_path):
     return directory + "geckodriver"
 
 
+def _get_tbb(tbb_version, tbb_path):
+    geckodriver_path = consts.DEFAULT_GECKODRIVER_EXECUTABLE
+
+    if tbb_version != "":
+        tbb_path = _extract_tbb_path_via_version(tbb_version)
+        geckodriver_path = _extract_geckodriver_path(tbb_path)
+
+    tbb = TorBrowserUsingStem(
+        tbb_path=tbb_path, executable_path=geckodriver_path, use_custom_profile=False, tbb_profile_path=tbb_path)
+    return tbb
+
+
 def _get_connected_tbb(tbb_version, tbb_path, manual):
 
     geckodriver_path = consts.DEFAULT_GECKODRIVER_EXECUTABLE
@@ -59,14 +71,39 @@ def _get_connected_tbb(tbb_version, tbb_path, manual):
 
     tbb = TorBrowserUsingStem(
         tbb_path=tbb_path, executable_path=geckodriver_path)
-    log.info("Manual: " + str(manual))
-    if manual == True:
-        return tbb
 
     tbb.launch_tbb()
     tbb.connect_to_tbb()
 
+    tbb.load_url(consts.URL_ISSUE_22867)
+
+    tbb.new_tab()
+
+    tbb.load_url(consts.URL_ISSUE_24866_1)
+
+    tbb.new_tab()
+
+    tbb.load_url(consts.URL_ISSUE_24866_2)
+
+    tbb.new_tab()
+
+    tbb.load_url(consts.DUCKDUCKGO_URL)
+
+    tbb.new_tab()
+
+    tbb.load_url(consts.DUCKDUCKGO_ONION)
+
+    tbb.kill_process()
+
     return tbb
+
+
+def _check_arguments(tbb_version, tbb_path, manual):
+    if manual is not True and tbb_path != "":
+        sys.system_exit("Can't use both manual and tbb_path!")
+
+    if tbb_version != "" and tbb_path != consts.TBB_PATH:
+        sys.system_exit("Can't use both tbb_version and tbb_path!")
 
 
 def pytest_addoption(parser):
@@ -82,21 +119,14 @@ def connected_tbb(request):
     manual = request.config.option.manual
     log.info("version: " + tbb_version)
 
-    tbb = _get_connected_tbb(tbb_version, tbb_path, manual)
+    _check_arguments(tbb_version, tbb_path, manual)
 
-    tbb.load_url(consts.URL_ISSUE_22867)
+    if manual == "False":
+        tbb = _get_connected_tbb(tbb_version, tbb_path, manual)
+    else:
+        tbb = _get_tbb(tbb_version, tbb_path)
 
-    tbb.new_tab()
-
-    tbb.load_url(consts.URL_ISSUE_24866_1)
-
-    tbb.new_tab()
-
-    tbb.load_url(consts.URL_ISSUE_24866_2)
-    time.sleep(30)
-    tbb.kill_process()
     yield tbb
-    log.info("FINISHED")
 
 
 @pytest.fixture
