@@ -62,7 +62,7 @@ def test_site_security_service_state_url_22867(connected_tbb):
 
 
 def test_site_security_service_state_url_24866_1(connected_tbb):
-    keyword = utils.extract_url_object(consts.URL_ISSUE_24866_1).fld
+    keyword = utils.extract_url_object(consts.URL_ISSUE_24866_1).parsed_url.netloc
     keywords_found = _keyword_in_file(
         connected_tbb.tbb_profile_path, consts.SITE_SECURITY_SERVICE_STATE, keyword)
 
