@@ -99,8 +99,6 @@ def _get_connected_tbb(tbb_version, tbb_path, manual):
 
 
 def _check_arguments(tbb_version, tbb_path, manual):
-    if manual is not True and tbb_path != "":
-        sys.system_exit("Can't use both manual and tbb_path!")
 
     if tbb_version != "" and tbb_path != consts.TBB_PATH:
         sys.system_exit("Can't use both tbb_version and tbb_path!")

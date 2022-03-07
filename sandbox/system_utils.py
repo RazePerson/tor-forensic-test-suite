@@ -74,6 +74,13 @@ class SystemUtils:
         else:
             self.log.info("%s is not a directory. Not deleting." % directory)
 
+    def create_dir_override(self, directory):
+        if self.dir_exists(directory):
+            self.delete_dir(directory)
+            self.create_dir(directory)
+        else:
+            self.create_dir(directory)
+
     def extract_tar_file(self, file_name, destination_path):
         file = tarfile.open(file_name)
 

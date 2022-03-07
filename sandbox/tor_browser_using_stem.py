@@ -1,3 +1,4 @@
+from datetime import datetime
 from lib2to3.pgen2 import driver
 from sandbox.logger import Logging
 from selenium.webdriver.common.by import By
@@ -80,6 +81,7 @@ class TorBrowserUsingStem:
         self.driver.quit()
         tor_pid = sys.get_pid("tor")
         sys.terminate_processes([tor_pid])
+        self.termination_time = datetime.now().timestamp()
 
     def element_exists(self, by, value):
         try:
