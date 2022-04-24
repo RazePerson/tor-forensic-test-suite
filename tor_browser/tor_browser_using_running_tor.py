@@ -1,4 +1,4 @@
-from logger import Logging
+from log.logger import Logging
 from tbselenium.tbdriver import TorBrowserDriver
 
 import subprocess

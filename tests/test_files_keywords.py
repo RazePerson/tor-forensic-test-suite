@@ -2,16 +2,16 @@ import os
 import glob
 import pytest
 import unittest
-import sandbox.consts as consts
+import consts as consts
 
 from sqlite3 import connect
 from datetime import datetime
-from sandbox.utils import Utils
-from sandbox.logger import Logging
-from sandbox.db_utils import DBUtils
+from utils.utils import Utils
+from log.logger import Logging
+from utils.db_utils import DBUtils
 from flashtext import KeywordProcessor
-from sandbox.system_utils import SystemUtils
-from sandbox.tor_browser_using_stem import TorBrowserUsingStem
+from utils.system_utils import SystemUtils
+from tor_browser.tor_browser_using_stem import TorBrowserUsingStem
 
 log = Logging()
 utils = Utils()

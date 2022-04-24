@@ -4,9 +4,9 @@ import os
 import consts as consts
 
 from utils import Utils
-from logger import Logging
-from system_utils import SystemUtils
-from tor_browser_using_stem import TorBrowserUsingStem
+from log.logger import Logging
+from utils.system_utils import SystemUtils
+from tor_browser.tor_browser_using_stem import TorBrowserUsingStem
 
 log = Logging()
 sys = SystemUtils()

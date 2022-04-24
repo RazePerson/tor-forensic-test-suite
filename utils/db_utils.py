@@ -3,11 +3,11 @@ import os
 import csv
 import codecs
 import sqlite3
-import sandbox.consts as consts
+import consts as consts
 
-from sandbox.logger import Logging
-from sandbox.system_utils import SystemUtils
-from sandbox.utils import Utils
+from log.logger import Logging
+from utils.system_utils import SystemUtils
+from utils.utils import Utils
 
 sys = SystemUtils()
 utils = Utils()

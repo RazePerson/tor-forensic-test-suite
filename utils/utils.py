@@ -3,11 +3,11 @@ import ftplib
 from urllib import request
 import requests
 import pandas as pd
-import sandbox.consts as consts
+import consts as consts
 
 from tld import get_tld
-from sandbox.logger import Logging
-from sandbox.system_utils import SystemUtils
+from log.logger import Logging
+from utils.system_utils import SystemUtils
 
 sys = SystemUtils()
 

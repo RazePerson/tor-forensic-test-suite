@@ -7,9 +7,9 @@ import shutil
 import socket
 import tarfile
 import subprocess
-import sandbox.consts as consts
+import consts as consts
 
-from sandbox.logger import Logging
+from log.logger import Logging
 
 class SystemUtils:
 

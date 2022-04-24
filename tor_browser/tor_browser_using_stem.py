@@ -1,13 +1,13 @@
 from datetime import datetime
 from lib2to3.pgen2 import driver
-from sandbox.logger import Logging
+from log.logger import Logging
 from selenium.webdriver.common.by import By
-from sandbox.system_utils import SystemUtils
+from utils.system_utils import SystemUtils
 from selenium.webdriver.common.keys import Keys
 from tbselenium.tbdriver import TorBrowserDriver
 from tbselenium.utils import launch_tbb_tor_with_stem
 
-import sandbox.consts as consts
+import consts as consts
 import tbselenium.common as cm
 
 sys = SystemUtils()

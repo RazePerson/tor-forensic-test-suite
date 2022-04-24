@@ -5,21 +5,22 @@ conftest.py
 import os
 import time
 import pytest
-import sandbox.consts as consts
+import consts as consts
 
 from re import search
 from ctypes import util
 from datetime import datetime
-from sandbox.utils import Utils
+from utils.utils import Utils
+from log.logger import Logging
+from utils.system_utils import SystemUtils
 from selenium.webdriver.common.by import By
-from sandbox.system_utils import SystemUtils
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
-from sandbox.tor_browser_using_stem import TorBrowserUsingStem
+from tor_browser.tor_browser_using_stem import TorBrowserUsingStem
 from selenium.webdriver.support import expected_conditions as EC
 
-from sandbox.logger import Logging
+
 log = Logging()
 utils = Utils()
 sys = SystemUtils()
