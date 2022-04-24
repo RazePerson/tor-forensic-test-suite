@@ -1,3 +1,4 @@
+from ctypes import util
 import os
 import csv
 import codecs
@@ -5,6 +6,11 @@ import sqlite3
 import sandbox.consts as consts
 
 from sandbox.logger import Logging
+from sandbox.system_utils import SystemUtils
+from sandbox.utils import Utils
+
+sys = SystemUtils()
+utils = Utils()
 
 
 class DBUtils:
@@ -57,3 +63,14 @@ class DBUtils:
                     writer.writerow(row)  # write data row
                 f.closed
         # print("Done! " + output_dir)
+
+    def get_column_values(self, path, db_file_regex, csv_file, column):
+        if len(sys.find_files(path, db_file_regex)) != 0:
+            db_file = str(sys.find_files(path, db_file_regex)[0])
+        else:
+            return None
+
+        sys.create_dir_override(consts.TEMP_TEST_DIR)
+        self.dump_to_csv(db_file, consts.TEMP_TEST_DIR)
+
+        return list(utils.read_csv_column(csv_file, column).values)
