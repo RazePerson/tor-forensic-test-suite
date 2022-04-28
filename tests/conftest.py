@@ -73,23 +73,9 @@ def _get_connected_tbb(tbb_version, tbb_path, manual):
     tbb.launch_tbb()
     tbb.connect_to_tbb()
 
-    tbb.load_url(consts.URL_ISSUE_22867)
-
-    tbb.new_tab()
-
-    tbb.load_url(consts.URL_ISSUE_24866_1)
-
-    tbb.new_tab()
-
-    tbb.load_url(consts.URL_ISSUE_24866_2)
-
-    tbb.new_tab()
-
-    tbb.load_url(consts.DUCKDUCKGO_URL)
-
-    tbb.new_tab()
-
-    tbb.load_url(consts.DUCKDUCKGO_ONION)
+    for url in consts.URLS_TO_LOAD:
+        tbb.load_url(url)
+        tbb.new_tab()
 
     tbb.kill_process()
 
@@ -139,10 +125,6 @@ def jetstream_tbb():
         raise TimeoutException("Timed out waiting for page to load")
     start_test_button = tbb.driver.find_element(by=By.XPATH,
                                                 value=consts.JETSTREAM_START_TEST_XPATH)
-    # self.log.info("Element: " + start_test_button)
-    # log.info("Is list: " + str(isinstance(start_test_button, list)))
-    # start_test_button = self.driver.find_element(
-    #     "/html/body/main/div[2]/a")
     start_test_button.click()
 
     return tbb
@@ -157,7 +139,7 @@ def duckduckgo_search_tbb():
         by=By.XPATH, value=consts.DUCKDUCKGO_SEARCH_BOX_XPATH)
     log.info(search_box)
 
-    search_box.send_keys("Mandalorian")
+    search_box.send_keys(consts.DUCKDUCKGO_SEARCH_KEYWORD)
     search_box.send_keys(Keys.RETURN)
 
     time.sleep(5)

@@ -68,7 +68,7 @@ def test_keyword_in_places_sqlite(connected_tbb):
     db_file_regex = "^places.sqlite$"
     csv_file = consts.TEMP_TEST_DIR + "/moz_places.csv"
     column = "title"
-    keyword = "Mandalorian"
+    keyword = consts.DUCKDUCKGO_SEARCH_KEYWORD
     keywords_found = _find_keyword_in_db_file(
         tbb_path, db_file_regex, csv_file, column, keyword)
 

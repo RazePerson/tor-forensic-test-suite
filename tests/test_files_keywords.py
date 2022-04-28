@@ -31,7 +31,7 @@ def _keyword_in_file(tbb_path, file_regex, keyword):
 @pytest.mark.skip()
 def test_keywords(connected_tbb):
     # strings = ""
-    keyword_processor.add_keyword("Mandalorian")
+    keyword_processor.add_keyword(consts.DUCKDUCKGO_SEARCH_KEYWORD)
     # path = consts.TBB_PATH
     path = connected_tbb.tbb_path
     log.info("Checking path: " + str(path))
