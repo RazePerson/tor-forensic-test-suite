@@ -1,13 +1,9 @@
-from sqlite3 import connect
-import time
-from importlib_metadata import csv
-from numpy import size
 import pytest
 import unittest
 
-from secretstorage import dbus_init
 import consts as consts
 
+from numpy import size
 from datetime import datetime
 from utils.utils import Utils
 from log.logger import Logging
@@ -23,27 +19,6 @@ db_utils = DBUtils()
 
 unittest.TestLoader.sortTestMethodsUsing = None
 
-
-# class TestSqlite(unittest.TestCase):
-
-# def setUp(self):
-#     self.tbb = TorBrowserUsingStem(tbb_path=consts.TBB_PATH)
-#     self.tbb.launch_tbb()
-#     self.tbb.connect_to_tbb()
-#     self.tbb.load_url(consts.JETSTREAM)
-#     self.tbb.start_jetstream_test()
-#     self.timestamp_before = datetime.now().timestamp()
-
-#     log.info("Tor PID: %s" % int(sys.get_pid("tor")))
-
-#     self.tbb.kill_process()
-#     self.timestamp_after = datetime.now().timestamp()
-#     timestamp_diff = int(self.timestamp_after) - int(self.timestamp_before)
-#     log.info("Timestamp before: %d - Timestamp after: %d" %
-#              (int(self.timestamp_before), int(self.timestamp_after)))
-#     log.info("Timestamp diff: %d" % timestamp_diff)
-#     self.timestamp = self.timestamp_after
-#     # self.timestamp = self.timestamp_after - timestamp_diff
 
 def _get_keywords_moz_places(tbb_path, url):
     tbb_path = tbb_path
@@ -70,20 +45,14 @@ def _find_keyword_in_db_file(tbb_path, db_file_regex, csv_file, column, keyword)
     return keyword_processor.extract_keywords(str(titles))
 
 
-@pytest.mark.skip()
-def test_jetstream(jetstream_tbb):
-    # connected_tbb.load_url(consts.JETSTREAM)
-    # connected_tbb.start_jetstream_test()
-    jetstream_tbb.kill_process()
-
-
 def test_timestamp(connected_tbb):
     tbb_path = connected_tbb.tbb_profile_path
     db_file_regex = "^storage.sqlite$"
     csv_file = consts.TEMP_TEST_DIR + "/origin.csv"
     column = "last_access_time"
 
-    time = db_utils.get_column_values(tbb_path, db_file_regex, csv_file, column)
+    time = db_utils.get_column_values(
+        tbb_path, db_file_regex, csv_file, column)
     timestamp = connected_tbb.termination_time
 
     final_timestamp = int(str(time[0])[:-6])
@@ -94,7 +63,6 @@ def test_timestamp(connected_tbb):
     assert (abs(final_timestamp - int(timestamp)) > 5)
 
 
-# @pytest.mark.skip()
 def test_keyword_in_places_sqlite(connected_tbb):
     tbb_path = connected_tbb.tbb_profile_path
     db_file_regex = "^places.sqlite$"
@@ -121,7 +89,6 @@ def test_find_url_moz_places(connected_tbb):
     log.info("Keywords: " + str(keywords_found))
 
     assert (keywords_found is None or len(keywords_found) == 0) is True
-    # utils.download_and_extract_tor_browser("6.0.1")
 
 
 @pytest.mark.skip()
@@ -137,7 +104,6 @@ def test_moz_origins_existence(connected_tbb):
     assert (file is None or size(file) == 0) is True
 
 
-# @pytest.mark.skip()
 def test_find_url_in_moz_origins(connected_tbb):
     keywords_found = _get_keywords_moz_places(
         connected_tbb.tbb_profile_path, consts.DUCKDUCKGO_URL)

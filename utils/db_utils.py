@@ -1,13 +1,12 @@
-from ctypes import util
 import os
 import csv
 import codecs
 import sqlite3
 import consts as consts
 
+from utils.utils import Utils
 from log.logger import Logging
 from utils.system_utils import SystemUtils
-from utils.utils import Utils
 
 sys = SystemUtils()
 utils = Utils()
@@ -45,7 +44,6 @@ class DBUtils:
             if len(cols) > 0:
                 # we have columns for the table, so OK to dump it
                 fname = tab + '.csv'
-                # print('Output: ' + output_dir + "/" + fname)
                 path_fname = os.path.join(output_dir, fname)
                 f = codecs.open(path_fname, 'w', encoding='utf-8')
                 writer = csv.writer(f, dialect=csv.excel,
@@ -62,7 +60,6 @@ class DBUtils:
                 for row in rows:
                     writer.writerow(row)  # write data row
                 f.closed
-        # print("Done! " + output_dir)
 
     def get_column_values(self, path, db_file_regex, csv_file, column):
         if len(sys.find_files(path, db_file_regex)) != 0:

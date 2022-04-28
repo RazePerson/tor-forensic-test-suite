@@ -43,7 +43,6 @@ class SystemUtils:
 
     def strings(self, filename):
         return subprocess.getoutput("strings %s" %filename)
-        # return subprocess.check_output(["strings", filename], input="text")
 
     def find_files(self, path, filename_regex):
         file_paths = []

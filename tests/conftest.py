@@ -7,9 +7,6 @@ import time
 import pytest
 import consts as consts
 
-from re import search
-from ctypes import util
-from datetime import datetime
 from utils.utils import Utils
 from log.logger import Logging
 from utils.system_utils import SystemUtils
@@ -156,23 +153,13 @@ def duckduckgo_search_tbb():
     tbb = _get_connected_tbb()
     tbb.load_url(consts.DUCKDUCKGO_ONION)
 
-    # log.info("Looking for cookie button...")
-    # if tbb.element_exists(by=By.XPATH, value=consts.COOKIE_AGREE_XPATH):
-    # log.info("Found it! Clicking it...")
-    # tbb.driver.find_element(by=By.XPATH, value=consts.COOKIE_AGREE_XPATH).click()
-
-    # log.info("Looking for search box element...")
     search_box = tbb.driver.find_element(
         by=By.XPATH, value=consts.DUCKDUCKGO_SEARCH_BOX_XPATH)
-    # log.info("Found search box element:")
     log.info(search_box)
 
-    # log.info("Searching...")
     search_box.send_keys("Mandalorian")
-    # log.info("Pressing return...")
     search_box.send_keys(Keys.RETURN)
 
     time.sleep(5)
 
-    # log.info("Done! Killing process...")
     tbb.kill_process()

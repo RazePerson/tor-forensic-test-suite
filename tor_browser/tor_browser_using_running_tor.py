@@ -19,10 +19,8 @@ class TorBrowserUsingRunningTor:
 
     def connect_to_tbb(self):
         self.log.info("Connecting to TBB...")
-        # tor_process = launch_tbb_tor_with_stem(tbb_path=tbb_path)
         with TorBrowserDriver(tbb_path=consts.TBB_PATH, tor_cfg=cm.USE_RUNNING_TOR,
                               socks_port=consts.SOCKCS_PORT, executable_path=consts.GECKODRIVER) as driver:
-            # input("Press Enter to continue...")
             self.driver = driver
 
     def load_url(self, url):
