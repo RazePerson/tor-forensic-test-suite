@@ -1,7 +1,7 @@
-import sandbox.consts as consts
+import consts as consts
 
-from sandbox.logger import Logging
-from sandbox.db_utils import DBUtils
+from log.logger import Logging
+from utils.db_utils import DBUtils
 
 log = Logging()
 db_utils = DBUtils()

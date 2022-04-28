@@ -1,13 +1,12 @@
 from datetime import datetime
-from lib2to3.pgen2 import driver
-from sandbox.logger import Logging
+from log.logger import Logging
 from selenium.webdriver.common.by import By
-from sandbox.system_utils import SystemUtils
+from utils.system_utils import SystemUtils
 from selenium.webdriver.common.keys import Keys
 from tbselenium.tbdriver import TorBrowserDriver
 from tbselenium.utils import launch_tbb_tor_with_stem
 
-import sandbox.consts as consts
+import consts as consts
 import tbselenium.common as cm
 
 sys = SystemUtils()
@@ -42,18 +41,14 @@ class TorBrowserUsingStem:
         self.log.info("TBB path: %s" % self.tbb_path)
         self.log.info("Starting TBB: %s" % tor_binary)
         self.tor_process = launch_tbb_tor_with_stem(tbb_path=self.tbb_path)
-        # return self.tor_process.pid
 
     def connect_to_tbb(self):
-        # tor_process = launch_tbb_tor_with_stem(tbb_path=tbb_path)
         self.driver = TorBrowserDriver(tbb_path=self.tbb_path,
                                        tor_cfg=cm.USE_STEM,
                                        executable_path=self.executable_path,
                                        use_custom_profile=self.use_custom_profile,
                                        tbb_profile_path=self.tbb_profile_path,
                                        tbb_logfile_path=consts.DEV_NULL)
-        # input("Press Enter to continue...")
-        # self.driver = driver
 
     def load_url(self, url):
         self.log.info("Loading url: %s" % url)
@@ -72,12 +67,9 @@ class TorBrowserUsingStem:
         self.driver.execute_script("window.open('about:blank','secondtab');")
 
         self.driver.switch_to.window("secondtab")
-        # self.driver.find_element_by_tag_name(
-        # 'body').send_keys(Keys.COMMAND + 't')
 
     def kill_process(self):
         self.log.info("Killing tor process...")
-        # self.tor_process.kill()
         self.driver.quit()
         tor_pid = sys.get_pid("tor")
         sys.terminate_processes([tor_pid])

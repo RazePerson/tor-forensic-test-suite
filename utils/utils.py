@@ -1,13 +1,11 @@
 import re
-import ftplib
-from urllib import request
 import requests
 import pandas as pd
-import sandbox.consts as consts
+import consts as consts
 
 from tld import get_tld
-from sandbox.logger import Logging
-from sandbox.system_utils import SystemUtils
+from log.logger import Logging
+from utils.system_utils import SystemUtils
 
 sys = SystemUtils()
 
@@ -38,8 +36,6 @@ class Utils:
 
         urls = self.find_url(file_strings)
         excluded_urls = ""
-        # print("Found urls:")
-        # found_urls = ''.join(utils.exclude_from_list(urls, consts.EXCLUDED_URLS))
         found_urls = ''.join(urls)
         sys.write_to_file(found_urls, tbb_path + "urls_in_bin_file")
 
@@ -70,22 +66,6 @@ class Utils:
 
         sys.extract_tar_file(file_path, directory)
         return directory
-
-    # def download_and_extract_tor_browser(self, version):
-    #     file_name = "tor-browser-linux64-" + version + "_en-US.tar.xz"
-    #     url = self.__build_url(version, file_name)
-    #     self.log.info("Downloading %s" % url)
-    #     response = requests.get(url)
-
-    #     directory = self.__create_download_dir(version)
-
-    #     file_path = directory + file_name
-    #     self.log.info("Writing response to file: %s" % file_path)
-    #     with open(file_path, "wb") as file:
-    #         file.write(response.content)
-
-    #     sys.extract_tar_file(file_path, directory)
-    #     return directory
 
     def read_csv_column(self, csv_file, column):
         df = pd.read_csv(csv_file)

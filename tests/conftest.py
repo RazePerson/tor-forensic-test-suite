@@ -5,21 +5,19 @@ conftest.py
 import os
 import time
 import pytest
-import sandbox.consts as consts
+import consts as consts
 
-from re import search
-from ctypes import util
-from datetime import datetime
-from sandbox.utils import Utils
+from utils.utils import Utils
+from log.logger import Logging
+from utils.system_utils import SystemUtils
 from selenium.webdriver.common.by import By
-from sandbox.system_utils import SystemUtils
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
-from sandbox.tor_browser_using_stem import TorBrowserUsingStem
+from tor_browser.tor_browser_using_stem import TorBrowserUsingStem
 from selenium.webdriver.support import expected_conditions as EC
 
-from sandbox.logger import Logging
+
 log = Logging()
 utils = Utils()
 sys = SystemUtils()
@@ -75,23 +73,9 @@ def _get_connected_tbb(tbb_version, tbb_path, manual):
     tbb.launch_tbb()
     tbb.connect_to_tbb()
 
-    tbb.load_url(consts.URL_ISSUE_22867)
-
-    tbb.new_tab()
-
-    tbb.load_url(consts.URL_ISSUE_24866_1)
-
-    tbb.new_tab()
-
-    tbb.load_url(consts.URL_ISSUE_24866_2)
-
-    tbb.new_tab()
-
-    tbb.load_url(consts.DUCKDUCKGO_URL)
-
-    tbb.new_tab()
-
-    tbb.load_url(consts.DUCKDUCKGO_ONION)
+    for url in consts.URLS_TO_LOAD:
+        tbb.load_url(url)
+        tbb.new_tab()
 
     tbb.kill_process()
 
@@ -141,10 +125,6 @@ def jetstream_tbb():
         raise TimeoutException("Timed out waiting for page to load")
     start_test_button = tbb.driver.find_element(by=By.XPATH,
                                                 value=consts.JETSTREAM_START_TEST_XPATH)
-    # self.log.info("Element: " + start_test_button)
-    # log.info("Is list: " + str(isinstance(start_test_button, list)))
-    # start_test_button = self.driver.find_element(
-    #     "/html/body/main/div[2]/a")
     start_test_button.click()
 
     return tbb
@@ -155,23 +135,13 @@ def duckduckgo_search_tbb():
     tbb = _get_connected_tbb()
     tbb.load_url(consts.DUCKDUCKGO_ONION)
 
-    # log.info("Looking for cookie button...")
-    # if tbb.element_exists(by=By.XPATH, value=consts.COOKIE_AGREE_XPATH):
-    # log.info("Found it! Clicking it...")
-    # tbb.driver.find_element(by=By.XPATH, value=consts.COOKIE_AGREE_XPATH).click()
-
-    # log.info("Looking for search box element...")
     search_box = tbb.driver.find_element(
         by=By.XPATH, value=consts.DUCKDUCKGO_SEARCH_BOX_XPATH)
-    # log.info("Found search box element:")
     log.info(search_box)
 
-    # log.info("Searching...")
-    search_box.send_keys("Mandalorian")
-    # log.info("Pressing return...")
+    search_box.send_keys(consts.DUCKDUCKGO_SEARCH_KEYWORD)
     search_box.send_keys(Keys.RETURN)
 
     time.sleep(5)
 
-    # log.info("Done! Killing process...")
     tbb.kill_process()

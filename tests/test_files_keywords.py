@@ -2,16 +2,12 @@ import os
 import glob
 import pytest
 import unittest
-import sandbox.consts as consts
+import consts as consts
 
-from sqlite3 import connect
-from datetime import datetime
-from sandbox.utils import Utils
-from sandbox.logger import Logging
-from sandbox.db_utils import DBUtils
+from utils.utils import Utils
+from log.logger import Logging
 from flashtext import KeywordProcessor
-from sandbox.system_utils import SystemUtils
-from sandbox.tor_browser_using_stem import TorBrowserUsingStem
+from utils.system_utils import SystemUtils
 
 log = Logging()
 utils = Utils()
@@ -35,7 +31,7 @@ def _keyword_in_file(tbb_path, file_regex, keyword):
 @pytest.mark.skip()
 def test_keywords(connected_tbb):
     # strings = ""
-    keyword_processor.add_keyword("Mandalorian")
+    keyword_processor.add_keyword(consts.DUCKDUCKGO_SEARCH_KEYWORD)
     # path = consts.TBB_PATH
     path = connected_tbb.tbb_path
     log.info("Checking path: " + str(path))
