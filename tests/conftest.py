@@ -87,6 +87,9 @@ def _check_arguments(tbb_version, tbb_path, manual):
     if tbb_version != "" and tbb_path != consts.TBB_PATH:
         sys.system_exit("Can't use both tbb_version and tbb_path!")
 
+    if tbb_version != "" and manual == True:
+        pytest.exit("Manual execution needed for tbb_version %s" % tbb_version)
+
 
 def pytest_addoption(parser):
     parser.addoption("--tbb_version", action="store", default="")
